@@ -1,0 +1,29 @@
+#!/bin/bash
+
+EREADER_SQLITE_PATH="/Volumes/KOBOeReader/.kobo/KoboReader.sqlite"
+KOBO_APP_SQLITE_PATH="$HOME/Library/Application Support/Kobo/Kobo Desktop Edition/Kobo.sqlite"
+
+if [ -f $EREADER_SQLITE_PATH ]
+then
+	KOBO_SQLITE="$EREADER_SQLITE_PATH"
+else
+	KOBO_SQLITE="$KOBO_APP_SQLITE_PATH"
+fi
+
+TEMP_FILE="$(mktemp)"
+sqlite3 "$KOBO_SQLITE" <<ENDSQL
+.mode json
+.output $TEMP_FILE
+select
+	content.Title,
+	content.Attribution,
+	Bookmark.DateCreated,
+	Bookmark.Text,
+	Bookmark.Annotation
+from Bookmark
+left join content on Bookmark.VolumeID = content.ContentID
+where Text is not null;
+.quit
+ENDSQL
+
+./jq -f format-script-filter.jq $TEMP_FILE --args $TEMP_FILE

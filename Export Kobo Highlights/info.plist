@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.tildeish.kobo-export</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>20CB0C13-DA18-447B-9299-3FF1BA3037DB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>EFA913BE-2975-4582-B4A5-A7B3C80343FC</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>2D8E3CA7-CD9C-4199-ABCF-B4FF8A4F58A4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BA1E33C3-58B9-4C69-A76E-DBDB5B5DAB0F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>EFA913BE-2975-4582-B4A5-A7B3C80343FC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2D8E3CA7-CD9C-4199-ABCF-B4FF8A4F58A4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>David Howell</string>
+	<key>description</key>
+	<string>Export highlights from Kobo ebooks</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Export Kobo Highlights</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import json
+import re
+import sys
+
+highlights = json.loads(sys.argv[1])
+
+for highlight in highlights:
+	text = re.sub(r'^', '&gt; ', highlight['Text'], flags=re.MULTILINE) 
+	sys.stdout.write(text)
+	sys.stdout.write('\n\n---\n\n')</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>2D8E3CA7-CD9C-4199-ABCF-B4FF8A4F58A4</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<true/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>BA1E33C3-58B9-4C69-A76E-DBDB5B5DAB0F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>kh</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>query=$1
+
+KOBO_ROOT="$HOME/Library/Application Support/Kobo/Kobo Desktop Edition"
+
+sqlite3 "$KOBO_ROOT/Kobo.sqlite" &lt;&lt;ENDSQL
+.mode json
+select content.Title, content.Attribution, Bookmark.DateCreated, Bookmark.Text from Bookmark left join content on Bookmark.VolumeID = content.ContentID where Text is not null;
+.quit
+ENDSQL
+
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>select-title-with-highlights</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>20CB0C13-DA18-447B-9299-3FF1BA3037DB</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>query=$1
+
+./jq ". | map(select(.Title == \"$query\"))" $highlights_file</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>format-highlights</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>EFA913BE-2975-4582-B4A5-A7B3C80343FC</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>20CB0C13-DA18-447B-9299-3FF1BA3037DB</key>
+		<dict>
+			<key>xpos</key>
+			<integer>95</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>2D8E3CA7-CD9C-4199-ABCF-B4FF8A4F58A4</key>
+		<dict>
+			<key>xpos</key>
+			<integer>465</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>BA1E33C3-58B9-4C69-A76E-DBDB5B5DAB0F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>655</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>EFA913BE-2975-4582-B4A5-A7B3C80343FC</key>
+		<dict>
+			<key>xpos</key>
+			<integer>290</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.0.1</string>
+	<key>webaddress</key>
+	<string>https://github.com/dehowell/alfred-kobo-export</string>
+</dict>
+</plist>
