@@ -75,7 +75,11 @@ highlights = json.loads(sys.argv[1])
 for highlight in highlights:
 	text = re.sub(r'^', '&gt; ', highlight['Text'], flags=re.MULTILINE) 
 	sys.stdout.write(text)
-	sys.stdout.write('\n\n---\n\n')</string>
+	note = highlight['Annotation']
+	if note != '':
+		sys.stdout.write('\n\n{}\n\n---\n\n'.format(note))
+	else:
+		sys.stdout.write('\n\n---\n\n')</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -136,18 +140,6 @@ for highlight in highlights:
 				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string></string>
-				<key>script</key>
-				<string>query=$1
-
-KOBO_ROOT="$HOME/Library/Application Support/Kobo/Kobo Desktop Edition"
-
-sqlite3 "$KOBO_ROOT/Kobo.sqlite" &lt;&lt;ENDSQL
-.mode json
-select content.Title, content.Attribution, Bookmark.DateCreated, Bookmark.Text from Bookmark left join content on Bookmark.VolumeID = content.ContentID where Text is not null;
-.quit
-ENDSQL
-
-</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
